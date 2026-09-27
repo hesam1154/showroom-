@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نمایشگاه خودرو | خرید و فروش با اطمینان</title>
+  <meta name="description" content="نمایشگاه آنلاین خودرو - خرید و فروش خودروهای ایرانی، چینی و خارجی">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </div>
+
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+
+    <nav class="nav">
+      <a href="index.html" class="active">خانه</a>
+      <a href="#categories">دسته‌بندی</a>
+      <a href="favorites.html"><i class="fas fa-heart"></i> علاقه‌مندی‌ها</a>
+      <a href="#contact">ارتباط با ما</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+  </div>
+</header>
+
+<section class="banner">
+  <div class="container">
+    <div class="banner-content">
+      <h1>🚗 نمایشگاه آنلاین خودرو</h1>
+      <p>خرید و فروش خودروهای ایرانی، چینی و خارجی با ضمانت اصالت</p>
+      <div class="banner-features">
+        <span><i class="fas fa-shield-alt"></i> ضمانت اصالت</span>
+        <span><i class="fas fa-eye"></i> بازدید حضوری</span>
+        <span><i class="fas fa-tag"></i> قیمت شفاف</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="categories" id="categories">
+  <div class="container">
+    <h2 class="section-title">دسته‌بندی خودروها</h2>
+    <div class="categories-grid">
+      <div class="category-card" data-category="iranian">
+        <div class="category-icon"><i class="fas fa-flag"></i></div>
+        <h3>خودروهای ایرانی</h3>
+        <p>ایران خودرو، سایپا، پارس خودرو، کرمان موتور</p>
+        <span class="category-count">مشاهده <i class="fas fa-arrow-left"></i></span>
+      </div>
+
+      <div class="category-card" data-category="chinese">
+        <div class="category-icon"><i class="fas fa-dragon"></i></div>
+        <h3>خودروهای چینی</h3>
+        <p>چری، MVM، جک، فونیکس، هایما، جیلی</p>
+        <span class="category-count">مشاهده <i class="fas fa-arrow-left"></i></span>
+      </div>
+
+      <div class="category-card" data-category="foreign">
+        <div class="category-icon"><i class="fas fa-globe"></i></div>
+        <h3>خودروهای خارجی</h3>
+        <p>تویوتا، هیوندای، کیا، بنز، بی‌ام‌و</p>
+        <span class="category-count">مشاهده <i class="fas fa-arrow-left"></i></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filters">
+  <div class="container">
+    <div class="filters-header">
+      <h2><i class="fas fa-sliders-h"></i> فیلتر پیشرفته</h2>
+    </div>
+
+    <div class="filter-grid" id="filter-grid">
+      <div class="filter-group">
+        <label>دسته‌بندی</label>
+        <select id="filter-category">
+          <option value="">همه دسته‌ها</option>
+          <option value="iranian">ایرانی</option>
+          <option value="chinese">چینی</option>
+          <option value="foreign">خارجی</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>برند</label>
+        <select id="filter-brand"><option value="">همه برندها</option></select>
+      </div>
+
+      <div class="filter-group">
+        <label>حداقل قیمت (تومان)</label>
+        <input type="number" id="filter-min-price" placeholder="مثلاً 500000000">
+      </div>
+
+      <div class="filter-group">
+        <label>حداکثر قیمت (تومان)</label>
+        <input type="number" id="filter-max-price" placeholder="مثلاً 2000000000">
+      </div>
+
+      <div class="filter-group">
+        <label>از سال</label>
+        <input type="number" id="filter-min-year" placeholder="مثلاً 1395">
+      </div>
+
+      <div class="filter-group">
+        <label>تا سال</label>
+        <input type="number" id="filter-max-year" placeholder="مثلاً 1403">
+      </div>
+
+      <div class="filter-group">
+        <label>حداکثر کارکرد (km)</label>
+        <input type="number" id="filter-max-km" placeholder="مثلاً 100000">
+      </div>
+
+      <div class="filter-group">
+        <label>مرتب‌سازی</label>
+        <select id="filter-sort">
+          <option value="newest">جدیدترین</option>
+          <option value="cheapest">ارزان‌ترین</option>
+          <option value="expensive">گران‌ترین</option>
+          <option value="low_km">کم‌کارکردترین</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button id="apply-filters" class="btn-primary">
+          <i class="fas fa-filter"></i> اعمال فیلتر
+        </button>
+        <button id="reset-filters" class="btn-secondary">
+          <i class="fas fa-redo"></i> حذف فیلترها
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cars-section">
+  <div class="container">
+    <div class="cars-header">
+      <h2><i class="fas fa-car"></i> خودروهای موجود</h2>
+      <span id="cars-count" class="cars-count"></span>
+    </div>
+    <div id="cars-grid" class="cars-grid"></div>
+    <div id="empty" class="empty" style="display:none;">
+      <i class="fas fa-car-crash"></i>
+      <p>خودرویی با این مشخصات پیدا نشد</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="container">
+    <h2 class="section-title">ارتباط با ما</h2>
+    <div class="contact-grid">
+
+      <div class="contact-card">
+        <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+        <h3>پشتیبانی</h3>
+        <div class="contact-phones">
+          <a href="tel:09137808813">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>سلیمانی</strong>
+              <span>0913 780 8813</span>
+            </div>
+          </a>
+          <a href="tel:09138998617">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>ابراهیمی</strong>
+              <span>0913 899 8617</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon telegram"><i class="fab fa-telegram"></i></div>
+        <h3>تلگرام</h3>
+        <p class="contact-desc">برای ارتباط سریع در تلگرام</p>
+        <a href="https://t.me/hesam_ss22" target="_blank" class="contact-link">
+          <i class="fab fa-telegram"></i>
+          @hesam_ss22
+        </a>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon whatsapp"><i class="fab fa-whatsapp"></i></div>
+        <h3>واتساپ</h3>
+        <p class="contact-desc">تماس فوری در واتساپ</p>
+        <a href="https://wa.me/989137808813" target="_blank" class="contact-link whatsapp-btn">
+          <i class="fab fa-whatsapp"></i>
+          ارسال پیام
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <i class="fas fa-car-side"></i>
+        <span>نمایشگاه خودرو</span>
+      </div>
+      <p class="footer-text">© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

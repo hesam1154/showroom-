@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جزئیات خودرو | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .car-detail-page { padding: 30px 0 60px; }
+    
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+    .breadcrumb a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .breadcrumb a:hover { color: #d4af37; }
+    .breadcrumb i { font-size: 10px; }
+
+    /* Layout */
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    /* Gallery */
+    .gallery-wrap {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+    .main-media {
+      aspect-ratio: 16/10;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+    }
+    .main-media img,
+    .main-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .main-media .no-media {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #334155;
+      font-size: 60px;
+    }
+    .media-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .media-nav:hover { background: #d4af37; color: #0f172a; }
+    .media-nav.prev { right: 12px; }
+    .media-nav.next { left: 12px; }
+    .media-counter {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .thumbs-row {
+      display: flex;
+      gap: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      background: #f8fafc;
+      scrollbar-width: thin;
+    }
+    .thumbs-row::-webkit-scrollbar { height: 6px; }
+    .thumbs-row::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .thumb-item {
+      flex-shrink: 0;
+      width: 90px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+      background: #e2e8f0;
+    }
+    .thumb-item.active { border-color: #d4af37; }
+    .thumb-item:hover { transform: scale(1.05); }
+    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item video { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item .video-badge {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    /* Info panel */
+    .info-panel {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+    .detail-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .detail-subtitle {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      color: #64748b;
+      font-size: 13.5px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f1f5f9;
+      flex-wrap: wrap;
+    }
+    .detail-subtitle .tracking-badge {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .detail-subtitle .featured-badge {
+      background: #fef3c7;
+      color: #b45309;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .detail-price {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+    .detail-price span {
+      font-size: 15px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .detail-price-label {
+      font-size: 12.5px;
+      color: #94a3b8;
+      margin-bottom: 22px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .action-btn {
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .btn-call {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+    }
+    .btn-call:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.2); }
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: #fff;
+    }
+    .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,0.3); }
+
+    .favorite-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+    .favorite-btn:hover { border-color: #ef4444; color: #ef4444; }
+    .favorite-btn.active {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .favorite-btn.active i { animation: heartBeat 0.5s; }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.3); }
+      50% { transform: scale(1.1); }
+      75% { transform: scale(1.25); }
+    }
+
+    /* Specs */
+    .specs-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .specs-title i { color: #d4af37; }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .spec-item {
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+    }
+    .spec-item .spec-label {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .spec-item .spec-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Description */
+    .description-box {
+      background: #f8fafc;
+      padding: 18px;
+      border-radius: 14px;
+      margin-top: 16px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.9;
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Visit form */
+    .visit-form-section {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 20px;
+      padding: 32px;
+      color: #fff;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .visit-form-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+      border-radius: 50%;
+    }
+    .visit-form-section h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .visit-form-section h2 i { color: #d4af37; }
+    .visit-form-section > p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .visit-form {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      position: relative;
+    }
+    .visit-form input,
+    .visit-form textarea {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      padding: 13px 16px;
+      border-radius: 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .visit-form input::placeholder,
+    .visit-form textarea::placeholder { color: #94a3b8; }
+    .visit-form input:focus,
+    .visit-form textarea:focus {
+      border-color: #d4af37;
+      background: rgba(255,255,255,0.12);
+    }
+    .visit-form textarea {
+      grid-column: 1 / -1;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .visit-form button {
+      grid-column: 1 / -1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .visit-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Similar cars */
+    .similar-section { margin-bottom: 40px; }
+    .similar-section h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .similar-section h2 i { color: #d4af37; }
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .similar-card {
+      background: #fff;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .similar-card:hover {
+      transform: translateY(-4px);
+      border-color: #d4af37;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+    }
+    .similar-card-image {
+      aspect-ratio: 16/10;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .similar-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .similar-card-info { padding: 14px; }
+    .similar-card-info h4 {
+      color: #0f172a;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .similar-card-info .similar-price {
+      color: #d4af37;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .similar-card-info .similar-meta {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* Location */
+    .location-section {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      margin-bottom: 40px;
+    }
+    .location-section h2 {
+      font-size: 18px;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .location-section h2 i { color: #d4af37; }
+    .location-text {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #475569;
+      font-size: 14.5px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Contact info */
+    .contact-strip {
+      background: linear-gradient(135deg, #f8fafc, #fff);
+      border: 1px solid #f1f5f9;
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .contact-strip-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      transition: all 0.3s;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .contact-strip-item:hover {
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(15,23,42,0.08);
+    }
+    .contact-strip-item i {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #fff;
+    }
+    .contact-strip-item .call-icon { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .contact-strip-item .wa-icon { background: linear-gradient(135deg, #25d366, #128c7e); }
+    .contact-strip-item .tg-icon { background: linear-gradient(135deg, #0088cc, #006699); }
+    .contact-strip-item .contact-name {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .contact-strip-item .contact-num {
+      font-size: 14px;
+      color: #0f172a;
+      font-weight: 800;
+      direction: ltr;
+      display: block;
+    }
+
+    /* Chat widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 999;
+      font-family: inherit;
+    }
+    .chat-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-toggle:hover { transform: scale(1.1); }
+    .chat-box {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      width: 340px;
+      max-width: calc(100vw - 60px);
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+      overflow: hidden;
+      display: none;
+      animation: chatSlide 0.3s ease-out;
+    }
+    @keyframes chatSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-box.open { display: block; }
+    .chat-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header strong { font-size: 15px; }
+    .chat-header p { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+    .chat-header button {
+      background: transparent;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .chat-body {
+      padding: 20px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+    .chat-message {
+      background: #fff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+      color: #475569;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+    }
+    .chat-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .chat-options a {
+      padding: 9px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+    }
+    .chat-opt-wa { background: #dcfce7; color: #15803d; }
+    .chat-opt-wa:hover { background: #15803d; color: #fff; }
+    .chat-opt-tg { background: #e0f2fe; color: #0369a1; }
+    .chat-opt-tg:hover { background: #0369a1; color: #fff; }
+    .chat-opt-call { background: #fee2e2; color: #b91c1c; }
+    .chat-opt-call:hover { background: #b91c1c; color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .detail-layout { grid-template-columns: 1fr; }
+      .info-panel { position: static; }
+      .similar-grid { grid-template-columns: repeat(2, 1fr); }
+      .visit-form { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .similar-grid { grid-template-columns: 1fr; }
+      .visit-form { grid-template-columns: 1fr; }
+      .specs-grid { grid-template-columns: 1fr; }
+      .detail-price { font-size: 22px; }
+      .chat-box { width: calc(100vw - 40px); }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </a>
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+    <nav class="nav">
+      <a href="index.html">خانه</a>
+      <a href="index.html#categories">دسته‌بندی</a>
+      <a href="index.html#contact">ارتباط با ما</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+  </div>
+</header>
+
+<main class="car-detail-page">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html"><i class="fas fa-home"></i> خانه</a>
+      <i class="fas fa-chevron-left"></i>
+      <span id="bc-title">جزئیات خودرو</span>
+    </div>
+
+    <div id="detail-content"></div>
+    <div id="loading-detail" style="text-align:center;padding:60px;color:#94a3b8;">
+      <i class="fas fa-spinner fa-spin" style="font-size:40px;color:#d4af37;"></i>
+      <p style="margin-top:15px;">در حال بارگذاری...</p>
+    </div>
+  </div>
+</main>
+
+<!-- چت ویجت -->
+<div class="chat-widget">
+  <div class="chat-box" id="chat-box">
+    <div class="chat-header">
+      <div>
+        <strong>پشتیبانی نمایشگاه</strong>
+        <p>معمولاً آنلاین هستیم</p>
+      </div>
+      <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-body">
+      <div class="chat-message">
+        سلام 👋 خوش آمدید به نمایشگاه خودرو.
+        <br>چطور می‌تونیم کمکتون کنیم؟
+      </div>
+      <div class="chat-options">
+        <a href="https://wa.me/989137808813" target="_blank" class="chat-opt-wa">
+          <i class="fab fa-whatsapp"></i> واتساپ
+        </a>
+        <a href="https://t.me/hesam_ss22" target="_blank" class="chat-opt-tg">
+          <i class="fab fa-telegram"></i> تلگرام
+        </a>
+        <a href="tel:09137808813" class="chat-opt-call">
+          <i class="fas fa-phone"></i> تماس
+        </a>
+      </div>
+      <div class="chat-message" style="margin-top:15px;font-size:12.5px;">
+        یا از طریق دکمه‌های بالا سریع با ما در ارتباط باش.
+      </div>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()">
+    <i class="fas fa-comments"></i>
+  </button>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/car.js"></script>
+</body>
+</html>

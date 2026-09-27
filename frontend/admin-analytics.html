@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آمار بازدید | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: #f8fafc; }
+    .analytics-header {
+      background: #fff;
+      padding: 18px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .analytics-header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .analytics-header h1 {
+      font-size: 18px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .analytics-header h1 i { color: #d4af37; }
+    .back-btn {
+      background: #f1f5f9;
+      color: #0f172a;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-btn:hover { background: #0f172a; color: #fff; }
+
+    .analytics-section { padding: 30px 0; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(15,23,42,0.1); }
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .stat-icon.gold { background: linear-gradient(135deg, #d4af37, #a8862c); }
+    .stat-icon.navy { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .stat-icon.green { background: linear-gradient(135deg, #25d366, #128c7e); }
+    .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .stat-info h3 {
+      font-size: 26px;
+      color: #0f172a;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+    .stat-info p { color: #64748b; font-size: 13px; }
+
+    .chart-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+      margin-bottom: 24px;
+    }
+    .chart-card h2 {
+      font-size: 16px;
+      color: #0f172a;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chart-card h2 i { color: #d4af37; }
+
+    .top-car-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .top-car-row:last-child { border-bottom: none; }
+    .top-car-row .car-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .top-car-row .car-rank {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #475569;
+    }
+    .top-car-row .car-rank.gold-rank {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+    }
+    .top-car-row .view-count {
+      color: #d4af37;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .top-car-row .view-count i { margin-left: 4px; }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
+    .no-data i { font-size: 40px; display: block; margin-bottom: 12px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+
+<div class="analytics-header">
+  <div class="container analytics-header-inner">
+    <h1><i class="fas fa-chart-line"></i> آمار و تحلیل بازدید</h1>
+    <a href="admin.html" class="back-btn"><i class="fas fa-arrow-right"></i> بازگشت به پنل</a>
+  </div>
+</div>
+
+<section class="analytics-section">
+  <div class="container">
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="chart-card">
+      <h2><i class="fas fa-fire"></i> پربازدیدترین خودروها</h2>
+      <div id="top-cars"></div>
+    </div>
+
+    <div class="chart-card">
+      <h2><i class="fas fa-heart"></i> علاقه‌مندی‌های ذخیره شده</h2>
+      <div id="fav-stats"></div>
+    </div>
+  </div>
+</section>
+
+<script src="js/api.js"></script>
+<script>
+async function loadAnalytics() {
+  const stats = JSON.parse(localStorage.getItem('visit_stats') || '{}');
+  const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+  const cars = await apiGetCars();
+
+  let totalVisits = 0;
+  const carVisits = [];
+  Object.keys(stats).forEach(k => {
+    if (k.startsWith('car_')) {
+      const id = Number(k.replace('car_', ''));
+      const count = stats[k];
+      totalVisits += count;
+      const car = cars.find(c => c.id === id);
+      if (car) carVisits.push({ ...car, visits: count });
+    }
+  });
+
+  carVisits.sort((a, b) => b.visits - a.visits);
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-eye"></i></div>
+      <div class="stat-info">
+        <h3>${totalVisits.toLocaleString('fa-IR')}</h3>
+        <p>کل بازدیدها</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon navy"><i class="fas fa-car"></i></div>
+      <div class="stat-info">
+        <h3>${cars.length.toLocaleString('fa-IR')}</h3>
+        <p>خودروهای فعال</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-heart"></i></div>
+      <div class="stat-info">
+        <h3>${favs.length.toLocaleString('fa-IR')}</h3>
+        <p>علاقه‌مندی‌ها</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
+      <div class="stat-info">
+        <h3>${carVisits.length.toLocaleString('fa-IR')}</h3>
+        <p>خودروهای بازدید شده</p>
+      </div>
+    </div>
+  `;
+
+  const topCarsEl = document.getElementById('top-cars');
+  if (!carVisits.length) {
+    topCarsEl.innerHTML = '<div class="no-data"><i class="fas fa-chart-line"></i><p>هنوز آماری ثبت نشده</p></div>';
+  } else {
+    topCarsEl.innerHTML = carVisits.slice(0, 10).map((c, i) => `
+      <div class="top-car-row">
+        <div class="car-name">
+          <span class="car-rank ${i < 3 ? 'gold-rank' : ''}">${i + 1}</span>
+          <span>${c.brand} ${c.model}</span>
+        </div>
+        <span class="view-count">${c.visits} <i class="fas fa-eye"></i></span>
+      </div>
+    `).join('');
+  }
+
+  const favEl = document.getElementById('fav-stats');
+  if (!favs.length) {
+    favEl.innerHTML = '<div class="no-data"><i class="fas fa-heart-broken"></i><p>هنوز خودرویی ذخیره نشده</p></div>';
+  } else {
+    const favCars = cars.filter(c => favs.includes(c.id));
+    favEl.innerHTML = favCars.map((c, i) => `
+      <div class="top-car-row">
+        <div class="car-name">
+          <span class="car-rank">${i + 1}</span>
+          <span>${c.brand} ${c.model}</span>
+        </div>
+        <span class="view-count" style="color:#ef4444;">❤️ ذخیره شده</span>
+      </div>
+    `).join('');
+  }
+}
+
+loadAnalytics();
+</script>
+</body>
+</html>

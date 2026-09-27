@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>علاقه‌مندی‌های من | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .fav-header {
+      background: linear-gradient(135deg, #f8fafc, #fff);
+      padding: 50px 0 30px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: center;
+    }
+    .fav-header h1 {
+      font-size: 30px;
+      color: #0f172a;
+      font-weight: 900;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .fav-header h1 i { color: #ef4444; }
+    .fav-header p { color: #64748b; font-size: 15px; }
+
+    .fav-section { padding: 40px 0 80px; }
+    .fav-count-badge {
+      display: inline-block;
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+    .fav-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: #94a3b8;
+    }
+    .fav-empty i {
+      font-size: 70px;
+      color: #e2e8f0;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .fav-empty h3 {
+      color: #475569;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .fav-empty p { font-size: 14px; margin-bottom: 25px; }
+    .fav-empty a {
+      display: inline-block;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .fav-empty a:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.4); }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </a>
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+    <nav class="nav">
+      <a href="index.html">خانه</a>
+      <a href="index.html#categories">دسته‌بندی</a>
+      <a href="favorites.html" class="active"><i class="fas fa-heart"></i> علاقه‌مندی‌ها</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+  </div>
+</header>
+
+<section class="fav-header">
+  <div class="container">
+    <h1><i class="fas fa-heart"></i> علاقه‌مندی‌های من</h1>
+    <p>خودروهایی که ذخیره کردی اینجا نمایش داده می‌شن</p>
+  </div>
+</section>
+
+<section class="fav-section">
+  <div class="container">
+    <div id="fav-count"></div>
+    <div id="fav-grid" class="cars-grid"></div>
+    <div id="fav-empty" class="fav-empty" style="display:none;">
+      <i class="fas fa-heart-broken"></i>
+      <h3>هنوز چیزی ذخیره نکردی</h3>
+      <p>خودروهای مورد علاقه‌ات رو با کلیک روی ❤️ ذخیره کن</p>
+      <a href="index.html"><i class="fas fa-car"></i> مشاهده خودروها</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/favorites.js"></script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .admin-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8fafc, #ffffff);
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 44px 36px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+      max-width: 440px;
+      width: 100%;
+      border: 1px solid #f1f5f9;
+    }
+    .login-card .login-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 22px;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+    .login-card h1 {
+      text-align: center;
+      font-size: 22px;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 26px;
+    }
+    .login-card input {
+      width: 100%;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.3s;
+      text-align: center;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .login-card input:focus {
+      border-color: #d4af37;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    }
+    .login-card button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .login-card button:hover {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    }
+    .login-card button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+    .login-error {
+      color: #dc2626;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .admin-panel { display: none; min-height: 100vh; background: #f8fafc; }
+    .admin-header {
+      background: #fff;
+      padding: 18px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-header h1 {
+      font-size: 18px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-header h1 i { color: #d4af37; }
+    .logout-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .logout-btn:hover { background: #dc2626; color: #fff; }
+
+    .admin-content { padding: 30px 0; }
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+    .admin-tab {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      color: #475569;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .admin-tab:hover { border-color: #d4af37; color: #0f172a; }
+    .admin-tab.active {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      border-color: transparent;
+    }
+    .admin-tab.active i { color: #d4af37; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .form-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+    }
+    .form-card h2 {
+      font-size: 18px;
+      color: #0f172a;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-card h2 i { color: #d4af37; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #d4af37;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-actions {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 2px solid #f1f5f9;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .media-upload {
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #f8fafc;
+      display: block;
+    }
+    .media-upload:hover {
+      border-color: #d4af37;
+      background: #fff;
+    }
+    .media-upload i {
+      font-size: 36px;
+      color: #d4af37;
+      margin-bottom: 12px;
+    }
+    .media-upload p {
+      color: #64748b;
+      font-size: 14px;
+    }
+    .media-upload input { display: none; }
+
+    .media-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .media-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f1f5f9;
+    }
+    .media-item img,
+    .media-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .media-item .remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cars-list-admin {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .admin-car-card {
+      background: #fff;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .admin-car-card:hover {
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+      transform: translateY(-3px);
+    }
+    .admin-car-image {
+      aspect-ratio: 16/10;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .admin-car-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .admin-car-info { padding: 16px; }
+    .admin-car-info h4 {
+      color: #0f172a;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    .admin-car-info p {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .admin-car-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .admin-car-actions button {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .btn-edit { background: #dbeafe; color: #1d4ed8; }
+    .btn-edit:hover { background: #1d4ed8; color: #fff; }
+    .btn-sold { background: #fef3c7; color: #b45309; }
+    .btn-sold:hover { background: #b45309; color: #fff; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-delete:hover { background: #dc2626; color: #fff; }
+
+    .empty-admin {
+      text-align: center;
+      padding: 50px 20px;
+      color: #94a3b8;
+    }
+    .empty-admin i {
+      font-size: 50px;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #0f172a;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transform: translateX(-400px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success i { color: #4ade80; }
+    .toast.error i { color: #f87171; }
+  </style>
+</head>
+<body>
+
+<!-- صفحه لاگین -->
+<div class="admin-login" id="login-view">
+  <div class="login-card">
+    <div class="login-icon"><i class="fas fa-lock"></i></div>
+    <h1>ورود به پنل مدیریت</h1>
+    <p>کد دسترسی ادمین رو وارد کن</p>
+    <input type="password" id="admin-code" placeholder="• • • • • • • •" autocomplete="off">
+    <button id="login-btn"><i class="fas fa-sign-in-alt"></i> ورود</button>
+    <div class="login-error" id="login-error">کد اشتباهه!</div>
+  </div>
+</div>
+
+<!-- پنل مدیریت -->
+<div class="admin-panel" id="admin-view">
+  <div class="admin-header">
+    <div class="container admin-header-inner">
+      <h1><i class="fas fa-car-side"></i> پنل مدیریت نمایشگاه</h1>
+      <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="container">
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="add"><i class="fas fa-plus-circle"></i> افزودن خودرو</button>
+        <button class="admin-tab" data-tab="list"><i class="fas fa-list"></i> مدیریت خودروها</button>
+        <a href="admin-analytics.html" class="admin-tab">
+          <i class="fas fa-chart-line"></i> آمار بازدید
+        </a>
+      </div>
+
+      <!-- تب افزودن -->
+      <div class="tab-content active" id="tab-add">
+        <div class="form-card">
+          <h2><i class="fas fa-plus-circle"></i> افزودن خودرو جدید</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>برند *</label>
+              <select id="f-brand" required>
+                <option value="">انتخاب کنید...</option>
+                <optgroup label="🇮🇷 ایرانی">
+                  <option>ایران خودرو</option>
+                  <option>سایپا</option>
+                  <option>پارس خودرو</option>
+                  <option>کرمان موتور</option>
+                  <option>مدیران خودرو</option>
+                  <option>بهمن موتور</option>
+                </optgroup>
+                <optgroup label="🇨🇳 چینی">
+                  <option>چری</option>
+                  <option>MVM</option>
+                  <option>فونیکس</option>
+                  <option>جک</option>
+                  <option>لیفان</option>
+                  <option>هایما</option>
+                  <option>جیلی</option>
+                  <option>BYD</option>
+                  <option>چانگان</option>
+                  <option>دانگ‌فنگ</option>
+                  <option>ام‌وی‌ام</option>
+                  <option>تیگو</option>
+                  <option>آریزو</option>
+                </optgroup>
+                <optgroup label="🌍 خارجی">
+                  <option>تویوتا</option>
+                  <option>هوندا</option>
+                  <option>هیوندای</option>
+                  <option>کیا</option>
+                  <option>نیسان</option>
+                  <option>مزدا</option>
+                  <option>بنز</option>
+                  <option>بی‌ام‌و</option>
+                  <option>آئودی</option>
+                  <option>پورشه</option>
+                  <option>لکسوس</option>
+                  <option>رنج روور</option>
+                  <option>ولوو</option>
+                  <option>فولکس‌واگن</option>
+                  <option>رنو</option>
+                  <option>پژو</option>
+                  <option>سیتروئن</option>
+                  <option>فیات</option>
+                  <option>شورولت</option>
+                  <option>فورد</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>مدل *</label>
+              <input type="text" id="f-model" placeholder="مثلاً سمند LX">
+            </div>
+
+            <div class="form-group">
+              <label>سال ساخت *</label>
+              <input type="number" id="f-year" placeholder="مثلاً 1400">
+            </div>
+
+            <div class="form-group">
+              <label>قیمت (تومان) *</label>
+              <input type="number" id="f-price" placeholder="مثلاً 800000000">
+            </div>
+
+            <div class="form-group">
+              <label>کارکرد (کیلومتر) *</label>
+              <input type="number" id="f-mileage" placeholder="مثلاً 50000">
+            </div>
+
+            <div class="form-group">
+              <label>رنگ</label>
+              <input type="text" id="f-color" placeholder="مثلاً سفید">
+            </div>
+
+            <div class="form-group">
+              <label>گیربکس</label>
+              <select id="f-gearbox">
+                <option value="">انتخاب...</option>
+                <option>دستی</option>
+                <option>اتوماتیک</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>سوخت</label>
+              <select id="f-fuel">
+                <option value="">انتخاب...</option>
+                <option>بنزینی</option>
+                <option>دوگانه‌سوز</option>
+                <option>دیزلی</option>
+                <option>هیبریدی</option>
+                <option>برقی</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت بدنه</label>
+              <select id="f-body">
+                <option value="">انتخاب...</option>
+                <option>بدون رنگ</option>
+                <option>دور رنگ</option>
+                <option>تصادفی</option>
+                <option>صفر کیلومتر</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت موتور</label>
+              <select id="f-engine">
+                <option value="">انتخاب...</option>
+                <option>سالم</option>
+                <option>نیاز به تعمیر</option>
+                <option>تعمیر شده</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت شاسی</label>
+              <select id="f-chassis">
+                <option value="">انتخاب...</option>
+                <option>سالم</option>
+                <option>رنگ شده</option>
+                <option>ضربه‌خورده</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>بیمه (ماه)</label>
+              <input type="number" id="f-insurance" placeholder="مثلاً 12">
+            </div>
+
+            <div class="form-group">
+              <label>شماره تماس</label>
+              <input type="tel" id="f-phone" placeholder="09137808813">
+            </div>
+
+            <div class="form-group">
+              <label>واتساپ</label>
+              <input type="tel" id="f-whatsapp" placeholder="989137808813">
+            </div>
+
+            <div class="form-group">
+              <label>آدرس / محل بازدید</label>
+              <input type="text" id="f-location" placeholder="آدرس نمایشگاه">
+            </div>
+
+            <div class="form-group full">
+              <label>توضیحات</label>
+              <textarea id="f-description" placeholder="جزئیات بیشتر درباره خودرو..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="checkbox" id="f-featured" style="width:auto;">
+                نمایش به عنوان ویژه ✨
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="save-car-btn"><i class="fas fa-save"></i> ذخیره خودرو</button>
+            <button class="btn-secondary" id="cancel-edit-btn" style="display:none;"><i class="fas fa-times"></i> لغو ویرایش</button>
+          </div>
+        </div>
+
+        <!-- آپلود رسانه -->
+        <div class="form-card" id="upload-card" style="display:none; margin-top:24px;">
+          <h2><i class="fas fa-images"></i> آپلود عکس و فیلم</h2>
+          <label class="media-upload" for="media-input">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>کلیک کن</strong> یا فایل‌ها رو بکش و اینجا بنداز</p>
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">عکس (JPG, PNG, WebP) یا فیلم (MP4) — حداکثر ۵۰ مگابایت</p>
+            <input type="file" id="media-input" multiple accept="image/*,video/*">
+          </label>
+          <div class="media-preview" id="media-preview"></div>
+        </div>
+      </div>
+
+      <!-- تب لیست -->
+      <div class="tab-content" id="tab-list">
+        <div class="form-card">
+          <h2><i class="fas fa-list"></i> خودروهای ثبت شده</h2>
+          <div class="cars-list-admin" id="admin-cars-list"></div>
+          <div class="empty-admin" id="admin-empty" style="display:none;">
+            <i class="fas fa-car-crash"></i>
+            <p>هنوز خودرویی ثبت نکردی</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toast-text"></span>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
