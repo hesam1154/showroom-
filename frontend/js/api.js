@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'showroom-hesam-ss22.onrender.com';
 
 function getToken() {
   return localStorage.getItem('admin_token');
