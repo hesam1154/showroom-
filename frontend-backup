@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آمار بازدید | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: #f8fafc; }
+    .analytics-header {
+      background: #fff;
+      padding: 18px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .analytics-header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .analytics-header h1 {
+      font-size: 18px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .analytics-header h1 i { color: #d4af37; }
+    .back-btn {
+      background: #f1f5f9;
+      color: #0f172a;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-btn:hover { background: #0f172a; color: #fff; }
+
+    .analytics-section { padding: 30px 0; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(15,23,42,0.1); }
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .stat-icon.gold { background: linear-gradient(135deg, #d4af37, #a8862c); }
+    .stat-icon.navy { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .stat-icon.green { background: linear-gradient(135deg, #25d366, #128c7e); }
+    .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .stat-info h3 {
+      font-size: 26px;
+      color: #0f172a;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+    .stat-info p { color: #64748b; font-size: 13px; }
+
+    .chart-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+      margin-bottom: 24px;
+    }
+    .chart-card h2 {
+      font-size: 16px;
+      color: #0f172a;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chart-card h2 i { color: #d4af37; }
+
+    .top-car-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .top-car-row:last-child { border-bottom: none; }
+    .top-car-row .car-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .top-car-row .car-rank {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #475569;
+    }
+    .top-car-row .car-rank.gold-rank {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+    }
+    .top-car-row .view-count {
+      color: #d4af37;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .top-car-row .view-count i { margin-left: 4px; }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
+    .no-data i { font-size: 40px; display: block; margin-bottom: 12px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+
+<div class="analytics-header">
+  <div class="container analytics-header-inner">
+    <h1><i class="fas fa-chart-line"></i> آمار و تحلیل بازدید</h1>
+    <a href="admin.html" class="back-btn"><i class="fas fa-arrow-right"></i> بازگشت به پنل</a>
+  </div>
+</div>
+
+<section class="analytics-section">
+  <div class="container">
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="chart-card">
+      <h2><i class="fas fa-fire"></i> پربازدیدترین خودروها</h2>
+      <div id="top-cars"></div>
+    </div>
+
+    <div class="chart-card">
+      <h2><i class="fas fa-heart"></i> علاقه‌مندی‌های ذخیره شده</h2>
+      <div id="fav-stats"></div>
+    </div>
+  </div>
+</section>
+
+<script src="js/api.js"></script>
+<script>
+async function loadAnalytics() {
+  const stats = JSON.parse(localStorage.getItem('visit_stats') || '{}');
+  const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+  const cars = await apiGetCars();
+
+  let totalVisits = 0;
+  const carVisits = [];
+  Object.keys(stats).forEach(k => {
+    if (k.startsWith('car_')) {
+      const id = Number(k.replace('car_', ''));
+      const count = stats[k];
+      totalVisits += count;
+      const car = cars.find(c => c.id === id);
+      if (car) carVisits.push({ ...car, visits: count });
+    }
+  });
+
+  carVisits.sort((a, b) => b.visits - a.visits);
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-eye"></i></div>
+      <div class="stat-info">
+        <h3>${totalVisits.toLocaleString('fa-IR')}</h3>
+        <p>کل بازدیدها</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon navy"><i class="fas fa-car"></i></div>
+      <div class="stat-info">
+        <h3>${cars.length.toLocaleString('fa-IR')}</h3>
+        <p>خودروهای فعال</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-heart"></i></div>
+      <div class="stat-info">
+        <h3>${favs.length.toLocaleString('fa-IR')}</h3>
+        <p>علاقه‌مندی‌ها</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
+      <div class="stat-info">
+        <h3>${carVisits.length.toLocaleString('fa-IR')}</h3>
+        <p>خودروهای بازدید شده</p>
+      </div>
+    </div>
+  `;
+
+  const topCarsEl = document.getElementById('top-cars');
+  if (!carVisits.length) {
+    topCarsEl.innerHTML = '<div class="no-data"><i class="fas fa-chart-line"></i><p>هنوز آماری ثبت نشده</p></div>';
+  } else {
+    topCarsEl.innerHTML = carVisits.slice(0, 10).map((c, i) => `
+      <div class="top-car-row">
+        <div class="car-name">
+          <span class="car-rank ${i < 3 ? 'gold-rank' : ''}">${i + 1}</span>
+          <span>${c.brand} ${c.model}</span>
+        </div>
+        <span class="view-count">${c.visits} <i class="fas fa-eye"></i></span>
+      </div>
+    `).join('');
+  }
+
+  const favEl = document.getElementById('fav-stats');
+  if (!favs.length) {
+    favEl.innerHTML = '<div class="no-data"><i class="fas fa-heart-broken"></i><p>هنوز خودرویی ذخیره نشده</p></div>';
+  } else {
+    const favCars = cars.filter(c => favs.includes(c.id));
+    favEl.innerHTML = favCars.map((c, i) => `
+      <div class="top-car-row">
+        <div class="car-name">
+          <span class="car-rank">${i + 1}</span>
+          <span>${c.brand} ${c.model}</span>
+        </div>
+        <span class="view-count" style="color:#ef4444;">❤️ ذخیره شده</span>
+      </div>
+    `).join('');
+  }
+}
+
+loadAnalytics();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .admin-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8fafc, #ffffff);
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 44px 36px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+      max-width: 440px;
+      width: 100%;
+      border: 1px solid #f1f5f9;
+    }
+    .login-card .login-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 22px;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+    .login-card h1 {
+      text-align: center;
+      font-size: 22px;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 26px;
+    }
+    .login-card input {
+      width: 100%;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.3s;
+      text-align: center;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .login-card input:focus {
+      border-color: #d4af37;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    }
+    .login-card button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .login-card button:hover {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    }
+    .login-card button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+    .login-error {
+      color: #dc2626;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .admin-panel { display: none; min-height: 100vh; background: #f8fafc; }
+    .admin-header {
+      background: #fff;
+      padding: 18px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-header h1 {
+      font-size: 18px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-header h1 i { color: #d4af37; }
+    .logout-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .logout-btn:hover { background: #dc2626; color: #fff; }
+
+    .admin-content { padding: 30px 0; }
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+    .admin-tab {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      color: #475569;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .admin-tab:hover { border-color: #d4af37; color: #0f172a; }
+    .admin-tab.active {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      border-color: transparent;
+    }
+    .admin-tab.active i { color: #d4af37; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .form-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #f1f5f9;
+    }
+    .form-card h2 {
+      font-size: 18px;
+      color: #0f172a;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-card h2 i { color: #d4af37; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #d4af37;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-actions {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 2px solid #f1f5f9;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .media-upload {
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #f8fafc;
+      display: block;
+    }
+    .media-upload:hover {
+      border-color: #d4af37;
+      background: #fff;
+    }
+    .media-upload i {
+      font-size: 36px;
+      color: #d4af37;
+      margin-bottom: 12px;
+    }
+    .media-upload p {
+      color: #64748b;
+      font-size: 14px;
+    }
+    .media-upload input { display: none; }
+
+    .media-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .media-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f1f5f9;
+    }
+    .media-item img,
+    .media-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .media-item .remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cars-list-admin {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .admin-car-card {
+      background: #fff;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .admin-car-card:hover {
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+      transform: translateY(-3px);
+    }
+    .admin-car-image {
+      aspect-ratio: 16/10;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .admin-car-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .admin-car-info { padding: 16px; }
+    .admin-car-info h4 {
+      color: #0f172a;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    .admin-car-info p {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .admin-car-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .admin-car-actions button {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .btn-edit { background: #dbeafe; color: #1d4ed8; }
+    .btn-edit:hover { background: #1d4ed8; color: #fff; }
+    .btn-sold { background: #fef3c7; color: #b45309; }
+    .btn-sold:hover { background: #b45309; color: #fff; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-delete:hover { background: #dc2626; color: #fff; }
+
+    .empty-admin {
+      text-align: center;
+      padding: 50px 20px;
+      color: #94a3b8;
+    }
+    .empty-admin i {
+      font-size: 50px;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #0f172a;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transform: translateX(-400px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success i { color: #4ade80; }
+    .toast.error i { color: #f87171; }
+  </style>
+</head>
+<body>
+
+<!-- صفحه لاگین -->
+<div class="admin-login" id="login-view">
+  <div class="login-card">
+    <div class="login-icon"><i class="fas fa-lock"></i></div>
+    <h1>ورود به پنل مدیریت</h1>
+    <p>کد دسترسی ادمین رو وارد کن</p>
+    <input type="password" id="admin-code" placeholder="• • • • • • • •" autocomplete="off">
+    <button id="login-btn"><i class="fas fa-sign-in-alt"></i> ورود</button>
+    <div class="login-error" id="login-error">کد اشتباهه!</div>
+  </div>
+</div>
+
+<!-- پنل مدیریت -->
+<div class="admin-panel" id="admin-view">
+  <div class="admin-header">
+    <div class="container admin-header-inner">
+      <h1><i class="fas fa-car-side"></i> پنل مدیریت نمایشگاه</h1>
+      <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="container">
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="add"><i class="fas fa-plus-circle"></i> افزودن خودرو</button>
+        <button class="admin-tab" data-tab="list"><i class="fas fa-list"></i> مدیریت خودروها</button>
+        <a href="admin-analytics.html" class="admin-tab">
+          <i class="fas fa-chart-line"></i> آمار بازدید
+        </a>
+      </div>
+
+      <!-- تب افزودن -->
+      <div class="tab-content active" id="tab-add">
+        <div class="form-card">
+          <h2><i class="fas fa-plus-circle"></i> افزودن خودرو جدید</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>برند *</label>
+              <select id="f-brand" required>
+                <option value="">انتخاب کنید...</option>
+                <optgroup label="🇮🇷 ایرانی">
+                  <option>ایران خودرو</option>
+                  <option>سایپا</option>
+                  <option>پارس خودرو</option>
+                  <option>کرمان موتور</option>
+                  <option>مدیران خودرو</option>
+                  <option>بهمن موتور</option>
+                </optgroup>
+                <optgroup label="🇨🇳 چینی">
+                  <option>چری</option>
+                  <option>MVM</option>
+                  <option>فونیکس</option>
+                  <option>جک</option>
+                  <option>لیفان</option>
+                  <option>هایما</option>
+                  <option>جیلی</option>
+                  <option>BYD</option>
+                  <option>چانگان</option>
+                  <option>دانگ‌فنگ</option>
+                  <option>ام‌وی‌ام</option>
+                  <option>تیگو</option>
+                  <option>آریزو</option>
+                </optgroup>
+                <optgroup label="🌍 خارجی">
+                  <option>تویوتا</option>
+                  <option>هوندا</option>
+                  <option>هیوندای</option>
+                  <option>کیا</option>
+                  <option>نیسان</option>
+                  <option>مزدا</option>
+                  <option>بنز</option>
+                  <option>بی‌ام‌و</option>
+                  <option>آئودی</option>
+                  <option>پورشه</option>
+                  <option>لکسوس</option>
+                  <option>رنج روور</option>
+                  <option>ولوو</option>
+                  <option>فولکس‌واگن</option>
+                  <option>رنو</option>
+                  <option>پژو</option>
+                  <option>سیتروئن</option>
+                  <option>فیات</option>
+                  <option>شورولت</option>
+                  <option>فورد</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>مدل *</label>
+              <input type="text" id="f-model" placeholder="مثلاً سمند LX">
+            </div>
+
+            <div class="form-group">
+              <label>سال ساخت *</label>
+              <input type="number" id="f-year" placeholder="مثلاً 1400">
+            </div>
+
+            <div class="form-group">
+              <label>قیمت (تومان) *</label>
+              <input type="number" id="f-price" placeholder="مثلاً 800000000">
+            </div>
+
+            <div class="form-group">
+              <label>کارکرد (کیلومتر) *</label>
+              <input type="number" id="f-mileage" placeholder="مثلاً 50000">
+            </div>
+
+            <div class="form-group">
+              <label>رنگ</label>
+              <input type="text" id="f-color" placeholder="مثلاً سفید">
+            </div>
+
+            <div class="form-group">
+              <label>گیربکس</label>
+              <select id="f-gearbox">
+                <option value="">انتخاب...</option>
+                <option>دستی</option>
+                <option>اتوماتیک</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>سوخت</label>
+              <select id="f-fuel">
+                <option value="">انتخاب...</option>
+                <option>بنزینی</option>
+                <option>دوگانه‌سوز</option>
+                <option>دیزلی</option>
+                <option>هیبریدی</option>
+                <option>برقی</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت بدنه</label>
+              <select id="f-body">
+                <option value="">انتخاب...</option>
+                <option>بدون رنگ</option>
+                <option>دور رنگ</option>
+                <option>تصادفی</option>
+                <option>صفر کیلومتر</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت موتور</label>
+              <select id="f-engine">
+                <option value="">انتخاب...</option>
+                <option>سالم</option>
+                <option>نیاز به تعمیر</option>
+                <option>تعمیر شده</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>وضعیت شاسی</label>
+              <select id="f-chassis">
+                <option value="">انتخاب...</option>
+                <option>سالم</option>
+                <option>رنگ شده</option>
+                <option>ضربه‌خورده</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>بیمه (ماه)</label>
+              <input type="number" id="f-insurance" placeholder="مثلاً 12">
+            </div>
+
+            <div class="form-group">
+              <label>شماره تماس</label>
+              <input type="tel" id="f-phone" placeholder="09137808813">
+            </div>
+
+            <div class="form-group">
+              <label>واتساپ</label>
+              <input type="tel" id="f-whatsapp" placeholder="989137808813">
+            </div>
+
+            <div class="form-group">
+              <label>آدرس / محل بازدید</label>
+              <input type="text" id="f-location" placeholder="آدرس نمایشگاه">
+            </div>
+
+            <div class="form-group full">
+              <label>توضیحات</label>
+              <textarea id="f-description" placeholder="جزئیات بیشتر درباره خودرو..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="checkbox" id="f-featured" style="width:auto;">
+                نمایش به عنوان ویژه ✨
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="save-car-btn"><i class="fas fa-save"></i> ذخیره خودرو</button>
+            <button class="btn-secondary" id="cancel-edit-btn" style="display:none;"><i class="fas fa-times"></i> لغو ویرایش</button>
+          </div>
+        </div>
+
+        <!-- آپلود رسانه -->
+        <div class="form-card" id="upload-card" style="display:none; margin-top:24px;">
+          <h2><i class="fas fa-images"></i> آپلود عکس و فیلم</h2>
+          <label class="media-upload" for="media-input">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>کلیک کن</strong> یا فایل‌ها رو بکش و اینجا بنداز</p>
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">عکس (JPG, PNG, WebP) یا فیلم (MP4) — حداکثر ۵۰ مگابایت</p>
+            <input type="file" id="media-input" multiple accept="image/*,video/*">
+          </label>
+          <div class="media-preview" id="media-preview"></div>
+        </div>
+      </div>
+
+      <!-- تب لیست -->
+      <div class="tab-content" id="tab-list">
+        <div class="form-card">
+          <h2><i class="fas fa-list"></i> خودروهای ثبت شده</h2>
+          <div class="cars-list-admin" id="admin-cars-list"></div>
+          <div class="empty-admin" id="admin-empty" style="display:none;">
+            <i class="fas fa-car-crash"></i>
+            <p>هنوز خودرویی ثبت نکردی</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toast-text"></span>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جزئیات خودرو | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .car-detail-page { padding: 30px 0 60px; }
+    
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+    .breadcrumb a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .breadcrumb a:hover { color: #d4af37; }
+    .breadcrumb i { font-size: 10px; }
+
+    /* Layout */
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    /* Gallery */
+    .gallery-wrap {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+    .main-media {
+      aspect-ratio: 16/10;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+    }
+    .main-media img,
+    .main-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .main-media .no-media {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #334155;
+      font-size: 60px;
+    }
+    .media-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .media-nav:hover { background: #d4af37; color: #0f172a; }
+    .media-nav.prev { right: 12px; }
+    .media-nav.next { left: 12px; }
+    .media-counter {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .thumbs-row {
+      display: flex;
+      gap: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      background: #f8fafc;
+      scrollbar-width: thin;
+    }
+    .thumbs-row::-webkit-scrollbar { height: 6px; }
+    .thumbs-row::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .thumb-item {
+      flex-shrink: 0;
+      width: 90px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+      background: #e2e8f0;
+    }
+    .thumb-item.active { border-color: #d4af37; }
+    .thumb-item:hover { transform: scale(1.05); }
+    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item video { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item .video-badge {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    /* Info panel */
+    .info-panel {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+    .detail-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .detail-subtitle {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      color: #64748b;
+      font-size: 13.5px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f1f5f9;
+      flex-wrap: wrap;
+    }
+    .detail-subtitle .tracking-badge {
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .detail-subtitle .featured-badge {
+      background: #fef3c7;
+      color: #b45309;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .detail-price {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+    .detail-price span {
+      font-size: 15px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .detail-price-label {
+      font-size: 12.5px;
+      color: #94a3b8;
+      margin-bottom: 22px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .action-btn {
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .btn-call {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+    }
+    .btn-call:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.2); }
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: #fff;
+    }
+    .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,0.3); }
+
+    .favorite-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+    .favorite-btn:hover { border-color: #ef4444; color: #ef4444; }
+    .favorite-btn.active {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .favorite-btn.active i { animation: heartBeat 0.5s; }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.3); }
+      50% { transform: scale(1.1); }
+      75% { transform: scale(1.25); }
+    }
+
+    /* Specs */
+    .specs-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .specs-title i { color: #d4af37; }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .spec-item {
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+    }
+    .spec-item .spec-label {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .spec-item .spec-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Description */
+    .description-box {
+      background: #f8fafc;
+      padding: 18px;
+      border-radius: 14px;
+      margin-top: 16px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.9;
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Visit form */
+    .visit-form-section {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 20px;
+      padding: 32px;
+      color: #fff;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .visit-form-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+      border-radius: 50%;
+    }
+    .visit-form-section h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .visit-form-section h2 i { color: #d4af37; }
+    .visit-form-section > p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .visit-form {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      position: relative;
+    }
+    .visit-form input,
+    .visit-form textarea {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      padding: 13px 16px;
+      border-radius: 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .visit-form input::placeholder,
+    .visit-form textarea::placeholder { color: #94a3b8; }
+    .visit-form input:focus,
+    .visit-form textarea:focus {
+      border-color: #d4af37;
+      background: rgba(255,255,255,0.12);
+    }
+    .visit-form textarea {
+      grid-column: 1 / -1;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .visit-form button {
+      grid-column: 1 / -1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .visit-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Similar cars */
+    .similar-section { margin-bottom: 40px; }
+    .similar-section h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .similar-section h2 i { color: #d4af37; }
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .similar-card {
+      background: #fff;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .similar-card:hover {
+      transform: translateY(-4px);
+      border-color: #d4af37;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+    }
+    .similar-card-image {
+      aspect-ratio: 16/10;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .similar-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .similar-card-info { padding: 14px; }
+    .similar-card-info h4 {
+      color: #0f172a;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .similar-card-info .similar-price {
+      color: #d4af37;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .similar-card-info .similar-meta {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* Location */
+    .location-section {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      margin-bottom: 40px;
+    }
+    .location-section h2 {
+      font-size: 18px;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .location-section h2 i { color: #d4af37; }
+    .location-text {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #475569;
+      font-size: 14.5px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Contact info */
+    .contact-strip {
+      background: linear-gradient(135deg, #f8fafc, #fff);
+      border: 1px solid #f1f5f9;
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .contact-strip-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      transition: all 0.3s;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .contact-strip-item:hover {
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(15,23,42,0.08);
+    }
+    .contact-strip-item i {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #fff;
+    }
+    .contact-strip-item .call-icon { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .contact-strip-item .wa-icon { background: linear-gradient(135deg, #25d366, #128c7e); }
+    .contact-strip-item .tg-icon { background: linear-gradient(135deg, #0088cc, #006699); }
+    .contact-strip-item .contact-name {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .contact-strip-item .contact-num {
+      font-size: 14px;
+      color: #0f172a;
+      font-weight: 800;
+      direction: ltr;
+      display: block;
+    }
+
+    /* Chat widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 999;
+      font-family: inherit;
+    }
+    .chat-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-toggle:hover { transform: scale(1.1); }
+    .chat-box {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      width: 340px;
+      max-width: calc(100vw - 60px);
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+      overflow: hidden;
+      display: none;
+      animation: chatSlide 0.3s ease-out;
+    }
+    @keyframes chatSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-box.open { display: block; }
+    .chat-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header strong { font-size: 15px; }
+    .chat-header p { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+    .chat-header button {
+      background: transparent;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .chat-body {
+      padding: 20px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+    .chat-message {
+      background: #fff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+      color: #475569;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+    }
+    .chat-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .chat-options a {
+      padding: 9px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+    }
+    .chat-opt-wa { background: #dcfce7; color: #15803d; }
+    .chat-opt-wa:hover { background: #15803d; color: #fff; }
+    .chat-opt-tg { background: #e0f2fe; color: #0369a1; }
+    .chat-opt-tg:hover { background: #0369a1; color: #fff; }
+    .chat-opt-call { background: #fee2e2; color: #b91c1c; }
+    .chat-opt-call:hover { background: #b91c1c; color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .detail-layout { grid-template-columns: 1fr; }
+      .info-panel { position: static; }
+      .similar-grid { grid-template-columns: repeat(2, 1fr); }
+      .visit-form { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .similar-grid { grid-template-columns: 1fr; }
+      .visit-form { grid-template-columns: 1fr; }
+      .specs-grid { grid-template-columns: 1fr; }
+      .detail-price { font-size: 22px; }
+      .chat-box { width: calc(100vw - 40px); }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </a>
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+    <nav class="nav">
+      <a href="index.html">خانه</a>
+      <a href="index.html#categories">دسته‌بندی</a>
+      <a href="index.html#contact">ارتباط با ما</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+  </div>
+</header>
+
+<main class="car-detail-page">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html"><i class="fas fa-home"></i> خانه</a>
+      <i class="fas fa-chevron-left"></i>
+      <span id="bc-title">جزئیات خودرو</span>
+    </div>
+
+    <div id="detail-content"></div>
+    <div id="loading-detail" style="text-align:center;padding:60px;color:#94a3b8;">
+      <i class="fas fa-spinner fa-spin" style="font-size:40px;color:#d4af37;"></i>
+      <p style="margin-top:15px;">در حال بارگذاری...</p>
+    </div>
+  </div>
+</main>
+
+<!-- چت ویجت -->
+<div class="chat-widget">
+  <div class="chat-box" id="chat-box">
+    <div class="chat-header">
+      <div>
+        <strong>پشتیبانی نمایشگاه</strong>
+        <p>معمولاً آنلاین هستیم</p>
+      </div>
+      <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-body">
+      <div class="chat-message">
+        سلام 👋 خوش آمدید به نمایشگاه خودرو.
+        <br>چطور می‌تونیم کمکتون کنیم؟
+      </div>
+      <div class="chat-options">
+        <a href="https://wa.me/989137808813" target="_blank" class="chat-opt-wa">
+          <i class="fab fa-whatsapp"></i> واتساپ
+        </a>
+        <a href="https://t.me/hesam_ss22" target="_blank" class="chat-opt-tg">
+          <i class="fab fa-telegram"></i> تلگرام
+        </a>
+        <a href="tel:09137808813" class="chat-opt-call">
+          <i class="fas fa-phone"></i> تماس
+        </a>
+      </div>
+      <div class="chat-message" style="margin-top:15px;font-size:12.5px;">
+        یا از طریق دکمه‌های بالا سریع با ما در ارتباط باش.
+      </div>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()">
+    <i class="fas fa-comments"></i>
+  </button>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/car.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>علاقه‌مندی‌های من | نمایشگاه خودرو</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .fav-header {
+      background: linear-gradient(135deg, #f8fafc, #fff);
+      padding: 50px 0 30px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: center;
+    }
+    .fav-header h1 {
+      font-size: 30px;
+      color: #0f172a;
+      font-weight: 900;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .fav-header h1 i { color: #ef4444; }
+    .fav-header p { color: #64748b; font-size: 15px; }
+
+    .fav-section { padding: 40px 0 80px; }
+    .fav-count-badge {
+      display: inline-block;
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+    .fav-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: #94a3b8;
+    }
+    .fav-empty i {
+      font-size: 70px;
+      color: #e2e8f0;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .fav-empty h3 {
+      color: #475569;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .fav-empty p { font-size: 14px; margin-bottom: 25px; }
+    .fav-empty a {
+      display: inline-block;
+      background: linear-gradient(135deg, #d4af37, #a8862c);
+      color: #0f172a;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .fav-empty a:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.4); }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </a>
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+    <nav class="nav">
+      <a href="index.html">خانه</a>
+      <a href="index.html#categories">دسته‌بندی</a>
+      <a href="favorites.html" class="active"><i class="fas fa-heart"></i> علاقه‌مندی‌ها</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+  </div>
+</header>
+
+<section class="fav-header">
+  <div class="container">
+    <h1><i class="fas fa-heart"></i> علاقه‌مندی‌های من</h1>
+    <p>خودروهایی که ذخیره کردی اینجا نمایش داده می‌شن</p>
+  </div>
+</section>
+
+<section class="fav-section">
+  <div class="container">
+    <div id="fav-count"></div>
+    <div id="fav-grid" class="cars-grid"></div>
+    <div id="fav-empty" class="fav-empty" style="display:none;">
+      <i class="fas fa-heart-broken"></i>
+      <h3>هنوز چیزی ذخیره نکردی</h3>
+      <p>خودروهای مورد علاقه‌ات رو با کلیک روی ❤️ ذخیره کن</p>
+      <a href="index.html"><i class="fas fa-car"></i> مشاهده خودروها</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/favorites.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="siTpv2f41Kj_xYALP_Mu1XsHKma9y49X-mdigpYO5oE" />
+  <title>نمایشگاه خودرو | خرید و فروش با اطمینان</title>
+  <meta name="description" content="نمایشگاه آنلاین خودرو - خرید و فروش خودروهای ایرانی، چینی و خارجی">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </a>
+
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="live-search" placeholder="جستجوی برند، مدل یا...">
+    </div>
+
+    <nav class="nav" id="main-nav">
+      <a href="index.html" class="active">خانه</a>
+      <a href="favorites.html"><i class="fas fa-heart"></i> علاقه‌مندی‌ها</a>
+      <a href="#contact">ارتباط با ما</a>
+      <a href="admin.html" class="admin-btn"><i class="fas fa-lock"></i> پنل مدیریت</a>
+    </nav>
+
+    <button class="menu-toggle" id="menu-toggle" aria-label="منو">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ============ BANNER ============ -->
+<section class="banner">
+  <div class="container">
+    <div class="banner-content">
+      <h1>خودروی رویایی‌ات رو با اطمینان پیدا کن</h1>
+      <p>خرید و فروش خودروهای ایرانی، چینی و خارجی با ضمانت اصالت</p>
+      <div class="banner-features">
+        <span><i class="fas fa-shield-alt"></i> ضمانت اصالت</span>
+        <span><i class="fas fa-eye"></i> بازدید حضوری</span>
+        <span><i class="fas fa-tag"></i> قیمت شفاف</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORY TABS ============ -->
+<section class="category-tabs-section">
+  <div class="container">
+    <div class="category-tabs">
+      <button class="category-tab active" data-category="">
+        <i class="fas fa-th"></i>
+        همه خودروها
+      </button>
+      <button class="category-tab" data-category="iranian">
+        <i class="fas fa-flag"></i>
+        ایرانی
+      </button>
+      <button class="category-tab" data-category="chinese">
+        <i class="fas fa-dragon"></i>
+        چینی
+      </button>
+      <button class="category-tab" data-category="foreign">
+        <i class="fas fa-globe"></i>
+        خارجی
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FILTERS ============ -->
+<section class="filters-new">
+  <div class="container">
+    <div class="filters-new-header">
+      <h2><i class="fas fa-sliders-h"></i> جستجوی هوشمند</h2>
+      <p>خودروی مورد نظرت رو سریع پیدا کن</p>
+    </div>
+
+    <!-- فیلتر دسکتاپ -->
+    <div class="filters-new-grid" id="desktop-filters">
+      <div class="filter-new-group">
+        <label><i class="fas fa-tag"></i> برند</label>
+        <select id="filter-brand">
+          <option value="">همه برندها</option>
+        </select>
+      </div>
+
+      <div class="filter-new-group">
+        <label><i class="fas fa-money-bill-wave"></i> بازه قیمت (تومان)</label>
+        <div class="range-double">
+          <input type="number" id="filter-min-price" placeholder="از">
+          <input type="number" id="filter-max-price" placeholder="تا">
+        </div>
+      </div>
+
+      <div class="filter-new-group">
+        <label><i class="fas fa-calendar-alt"></i> سال ساخت</label>
+        <div class="range-double">
+          <input type="number" id="filter-min-year" placeholder="از سال">
+          <input type="number" id="filter-max-year" placeholder="تا سال">
+        </div>
+      </div>
+
+      <div class="filter-new-group">
+        <label><i class="fas fa-tachometer-alt"></i> حداکثر کارکرد</label>
+        <input type="number" id="filter-max-km" placeholder="مثلاً 100000">
+      </div>
+
+      <div class="filter-new-group">
+        <label><i class="fas fa-sort"></i> مرتب‌سازی</label>
+        <select id="filter-sort">
+          <option value="newest">جدیدترین</option>
+          <option value="cheapest">ارزان‌ترین</option>
+          <option value="expensive">گران‌ترین</option>
+          <option value="low_km">کم‌کارکردترین</option>
+        </select>
+      </div>
+
+      <div class="filter-new-actions">
+        <button id="apply-filters" class="btn-apply">
+          <i class="fas fa-search"></i> جستجو
+        </button>
+        <button id="reset-filters" class="btn-reset">
+          <i class="fas fa-redo"></i> پاک کردن
+        </button>
+      </div>
+    </div>
+
+    <!-- فیلترهای سریع -->
+    <div class="quick-filters">
+      <span class="quick-label"><i class="fas fa-bolt"></i> فیلتر سریع:</span>
+      <button class="quick-chip" data-quick="cheap">
+        <i class="fas fa-fire"></i> زیر ۵۰۰ میلیون
+      </button>
+      <button class="quick-chip" data-quick="lowkm">
+        <i class="fas fa-tachometer-alt"></i> کم‌کارکرد
+      </button>
+      <button class="quick-chip" data-quick="featured">
+        <i class="fas fa-crown"></i> ویژه
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARS ============ -->
+<section class="cars-section">
+  <div class="container">
+    <div class="cars-header">
+      <h2 id="cars-title"><i class="fas fa-car"></i> همه خودروها</h2>
+      <span id="cars-count" class="cars-count"></span>
+    </div>
+    <div id="cars-grid" class="cars-grid"></div>
+    <div id="empty" class="empty" style="display:none;">
+      <i class="fas fa-car-crash"></i>
+      <p>خودرویی با این مشخصات پیدا نشد</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT (NEW) ============ -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <h2 class="section-title">ارتباط با ما</h2>
+
+    <div class="contact-grid">
+
+      <!-- WhatsApp -->
+      <div class="contact-card">
+        <div class="contact-icon whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <h3>واتساپ</h3>
+        <p class="contact-desc">تماس فوری در واتساپ</p>
+        <a href="https://wa.me/989137808813" target="_blank" class="contact-link whatsapp-btn">
+          <i class="fab fa-whatsapp"></i>
+          ارسال پیام
+        </a>
+      </div>
+
+      <!-- Telegram -->
+      <div class="contact-card">
+        <div class="contact-icon telegram">
+          <i class="fab fa-telegram"></i>
+        </div>
+        <h3>تلگرام</h3>
+        <p class="contact-desc">ارتباط سریع در تلگرام</p>
+        <a href="https://t.me/hesam_ss22" target="_blank" class="contact-link">
+          <i class="fab fa-telegram"></i>
+          @hesam_ss22
+        </a>
+      </div>
+
+      <!-- Support -->
+      <div class="contact-card">
+        <div class="contact-icon">
+          <i class="fas fa-headset"></i>
+        </div>
+        <h3>پشتیبانی</h3>
+        <p class="contact-desc">برای مشاوره خرید و فروش</p>
+        <div class="contact-phones">
+          <a href="tel:09137808813">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>سلیمانی</strong>
+              <span>0913 780 8813</span>
+            </div>
+          </a>
+          <a href="tel:09138998617">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>ابراهیمی</strong>
+              <span>0913 899 8617</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-brand">
+      <i class="fas fa-car-side"></i>
+      <span>نمایشگاه خودرو</span>
+    </div>
+    <p class="footer-text">© 2025 نمایشگاه خودرو — تمام حقوق محفوظ است</p>
+  </div>
+</footer>
+
+<!-- ============ MOBILE BOTTOM SHEET ============ -->
+<div class="filter-sheet-overlay" id="filter-overlay"></div>
+<div class="filter-sheet" id="filter-sheet">
+  <h3><i class="fas fa-sliders-h"></i> فیلتر خودروها</h3>
+
+  <div class="filter-new-group" style="margin-bottom:14px;">
+    <label><i class="fas fa-tag"></i> برند</label>
+    <select id="m-filter-brand">
+      <option value="">همه برندها</option>
+    </select>
+  </div>
+
+  <div class="filter-new-group" style="margin-bottom:14px;">
+    <label><i class="fas fa-money-bill-wave"></i> بازه قیمت (تومان)</label>
+    <div class="range-double">
+      <input type="number" id="m-filter-min-price" placeholder="از">
+      <input type="number" id="m-filter-max-price" placeholder="تا">
+    </div>
+  </div>
+
+  <div class="filter-new-group" style="margin-bottom:14px;">
+    <label><i class="fas fa-calendar-alt"></i> سال ساخت</label>
+    <div class="range-double">
+      <input type="number" id="m-filter-min-year" placeholder="از سال">
+      <input type="number" id="m-filter-max-year" placeholder="تا سال">
+    </div>
+  </div>
+
+  <div class="filter-new-group" style="margin-bottom:14px;">
+    <label><i class="fas fa-tachometer-alt"></i> حداکثر کارکرد</label>
+    <input type="number" id="m-filter-max-km" placeholder="مثلاً 100000">
+  </div>
+
+  <div class="filter-new-group" style="margin-bottom:22px;">
+    <label><i class="fas fa-sort"></i> مرتب‌سازی</label>
+    <select id="m-filter-sort">
+      <option value="newest">جدیدترین</option>
+      <option value="cheapest">ارزان‌ترین</option>
+      <option value="expensive">گران‌ترین</option>
+      <option value="low_km">کم‌کارکردترین</option>
+    </select>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <button id="m-apply-filters" class="btn-apply">
+      <i class="fas fa-check"></i> اعمال
+    </button>
+    <button id="m-reset-filters" class="btn-reset">
+      <i class="fas fa-redo"></i> حذف
+    </button>
+  </div>
+</div>
+
+<!-- ============ FLOATING FILTER BUTTON ============ -->
+<button class="floating-filter-btn" id="floating-filter-btn">
+  <i class="fas fa-filter"></i> فیلتر خودروها
+</button>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
